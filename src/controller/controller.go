@@ -35,13 +35,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	collection, err := db.GetDBCollection()
-
+	
 	if err != nil {
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(res)
 		return
 	}
-
+	
+	fmt.Printf("Mongo Collection called.")
+	
 	var result model.User
 	err = collection.FindOne(context.TODO(), bson.D{{Key: "username", Value: user.Username}}).Decode(&result)
 
