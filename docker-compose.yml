@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo
+    container_name: 'mongo'
+    ports:
+      - '27017:27017'
+    volumes:
+      - 'mongodata:/data/db'
+  api:
+    depends_on:
+      - mongodb
+    build: .
+    ports:
+      - '8080:8080'
+    volumes:
+      - .:/code
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_DB=mpg
+      - v=0.1
+volumes:
+  mongodata:
