@@ -20,6 +20,19 @@ import (
 
 var version = os.Getenv("v")
 
+// Controller defines the controller struct
+type Controller struct {
+	Db db.UserDb
+}
+
+// CreateController takes in a db, returns a controller
+func CreateController(db db.UserDb) Controller {
+	var ctlr Controller
+	ctlr.Db = database
+
+	return ctlr
+}
+
 // RegisterHandler to
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -35,17 +48,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	collection, err := db.GetDBCollection()
-	
+
 	if err != nil {
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(res)
 		return
 	}
-	
-	fmt.Printf("Mongo Collection called.")
-	
+
 	var result model.User
-	err = collection.FindOne(context.TODO(), bson.D{{Key: "username", Value: user.Username}}).Decode(&result)
+	err = db.FindOne(context.TODO(), bson.D{{Key: "username", Value: user.Username}}).Decode(&result)
 
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
